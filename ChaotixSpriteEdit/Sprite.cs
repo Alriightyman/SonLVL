@@ -189,7 +189,8 @@ namespace ChaotixSpriteEdit
 			{
 				sbyte xl = (sbyte)file[addr++];
 				sbyte xr = (sbyte)file[addr++];
-				if (xl == 0 && xr == 0) break;
+				if (xl == xr) 
+					break;
 				y = (sbyte)file[addr];
 				addr += 2;
 				Array.Copy(file, addr, bmp.Bits, bmp.GetPixelIndex(xl - left, y - top), xr - xl);
