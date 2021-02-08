@@ -40,7 +40,15 @@ namespace ChaotixSpriteEdit
 				fillcur = new Cursor(ms);
 			spriteImagePanel.Cursor = pencilcur;
 			if (Program.Arguments.Count > 0)
-				LoadSprite(Program.Arguments[0]);
+			{
+				bool isPacked = false;
+				if(Program.Arguments.Count > 1 && Program.Arguments[1] == "-p")
+				{
+					isPacked = true;
+				}
+
+				LoadSprite(Program.Arguments[0], isPacked);
+			}
 		}
 
 		private void MainForm_FormClosing(object sender, FormClosingEventArgs e)
@@ -64,16 +72,23 @@ namespace ChaotixSpriteEdit
 			saveToolStripMenuItem.Enabled = false;
 		}
 
-		private void openToolStripMenuItem_Click(object sender, EventArgs e)
+		private void openUnpackedToolStripMenuItem_Click(object sender, EventArgs e)
 		{
 			using (OpenFileDialog dlg = new OpenFileDialog() { DefaultExt = "bin", Filter = "Binary Files|*.bin|All Files|*.*", RestoreDirectory = true })
 				if (dlg.ShowDialog(this) == DialogResult.OK)
-					LoadSprite(dlg.FileName);
+					LoadSprite(dlg.FileName, false);
 		}
 
-		private void LoadSprite(string filename)
+		private void openPackedToolStripMenuItem_Click(object sender, EventArgs e)
 		{
-			sprite = Sprite.LoadChaotixSprite(filename);
+			using (OpenFileDialog dlg = new OpenFileDialog() { DefaultExt = "bin", Filter = "Binary Files|*.bin|All Files|*.*", RestoreDirectory = true })
+				if (dlg.ShowDialog(this) == DialogResult.OK)
+					LoadSprite(dlg.FileName, true);
+		}
+
+		private void LoadSprite(string filename, bool isPacked)
+		{
+			sprite = Sprite.LoadChaotixSprite(filename, isPacked);
 			spriteImagePanel.Size = new Size(sprite.Width * 4, sprite.Height * 4);
 			offsetXNumericUpDown.Value = sprite.X;
 			offsetYNumericUpDown.Value = sprite.Y;
@@ -100,19 +115,38 @@ namespace ChaotixSpriteEdit
 				}
 		}
 
-		private void saveToolStripMenuItem_Click(object sender, EventArgs e)
+		private void saveUnpackedToolStripMenuItem_Click(object sender, EventArgs e)
 		{
 			sprite.SaveChaotixSprite(filename);
 		}
 
-		private void saveAsToolStripMenuItem_Click(object sender, EventArgs e)
+		private void savePackedToolStripMenuItem_Click(object sender, EventArgs e)
+		{
+			sprite.SaveChaotixSprite(filename, false);
+		}
+
+		private void saveAsUnpackedToolStripMenuItem_Click(object sender, EventArgs e)
 		{
 			using (SaveFileDialog dlg = new SaveFileDialog() { DefaultExt = "bin", Filter = "Binary Files|*.bin|All Files|*.*", RestoreDirectory = true })
+			{
 				if (dlg.ShowDialog(this) == DialogResult.OK)
 				{
 					filename = dlg.FileName;
-					sprite.SaveChaotixSprite(filename);
+					sprite.SaveChaotixSprite(filename, false);
 				}
+			}
+		}
+
+		private void saveAsPackedToolStripMenuItem_Click(object sender, EventArgs e)
+		{
+			using (SaveFileDialog dlg = new SaveFileDialog() { DefaultExt = "bin", Filter = "Binary Files|*.bin|All Files|*.*", RestoreDirectory = true })
+			{
+				if (dlg.ShowDialog(this) == DialogResult.OK)
+				{
+					filename = dlg.FileName;
+					sprite.SaveChaotixSprite(filename, true);
+				}
+			}
 		}
 
 		private void exitToolStripMenuItem_Click(object sender, EventArgs e)
