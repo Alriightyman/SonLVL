@@ -297,7 +297,8 @@ namespace ChaotixSpriteEdit
 				int xl = -1;
 				for (int x = 0; x < Width; x++)
 				{
-					if (Image[x, y] != 0)
+					var value = Image[x, y];
+					if (value != 0)
 					{
 						xl = x;
 						break;
@@ -312,7 +313,8 @@ namespace ChaotixSpriteEdit
 				int xr = 0;
 				for (int x = Width - 1; x >= xl; x--)
 				{
-					if (Image[x, y] != 0)
+					var value = Image[x, y];
+					if (value != 0)
 					{
 						xr = x + 1;
 						break;
@@ -349,8 +351,8 @@ namespace ChaotixSpriteEdit
 		private byte[] ConvertToPacked()
 		{
 			byte[] result;
-
-			result = PackChaotixArt(this);
+		
+			result = PackChaotixArt(this.ConvertToUnpacked());
 
 			return result;
 		}
@@ -461,12 +463,11 @@ namespace ChaotixSpriteEdit
 			return result.ToArray();
 		}
 
-		public static byte[] PackChaotixArt(Sprite sprite)
+		public static byte[] PackChaotixArt(byte[] unpackedData)
 		{
 			frb = 0;
 			int index = 0;
-			byte[] unpackedData = sprite.ConvertToUnpacked();
-
+			
 			List<byte> result = new List<byte>();
 
 			List<IData> data = new List<IData>();
@@ -672,6 +673,8 @@ namespace ChaotixSpriteEdit
 
 			result = WriteBitStream(result, 9 - frb, 0);
 
+			if (result.Count % 2 != 0)
+				result.Add(0);
 
 			return result.ToArray();
 		}
